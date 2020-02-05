@@ -7,6 +7,19 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
 
+
+    const init = () =>{
+      // get aspects of the page
+        // button to hook up click event
+      const send = document.querySelector('#send');
+      send.onclick = () => {
+        // hook up page and type to be sent via onClick event
+        const page = document.querySelector("#page").value;
+        const type = document.querySelector("#type").value;
+      };
+    }
+
+    window.onload = init;
   </script>
 </head>
 <body>
