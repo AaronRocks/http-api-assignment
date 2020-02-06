@@ -4,7 +4,7 @@ const respond = (request, response, content, type, statusCode) => {
   response.end();
 };
 
-const getPage = (request, response, acceptedTypes, statusCode) => {
+const getPage = (request, response, acceptedTypes, statusCode, params) => {
   const body = {
     message: 'This is a successful response',
     statusMessage: "Success",
@@ -34,6 +34,12 @@ const getPage = (request, response, acceptedTypes, statusCode) => {
   }
   // if not any of the other status codes, error 404 not found
   else if (statusCode === 200){}
+  else if (params === 'yes'){
+    body.message = "you successfully viewed thr content";
+  }
+  else if(params === 'true'){
+    body.message = 'the request has the desired parameters';
+  }
   else {
     body.id = 'notFound';
     body.message = 'The page you are looking for is not found';

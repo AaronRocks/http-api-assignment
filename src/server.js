@@ -12,7 +12,7 @@ const onRequest = (request, response) => {
 
   // basic status code is success
   let statusCode = 200;
-
+  let params = query.parse(parsedUrl.query);
   // default index page
   if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
@@ -25,10 +25,12 @@ const onRequest = (request, response) => {
     // anything else will check the url. If it is not accepted, will return 404 page
     if (parsedUrl.pathname === '/badRequest') {
       // check if the user has querystring of valid=true -> if not, retrun status code 400
-      statusCode = 400;
+      if (!params.valid || params.valid !== 'true')
+        statusCode = 400;
     }
     else if (parsedUrl.pathname === '/unauthorized'){
         // check if user has querystring of loggedIn=yes -> if not status code 401
+        if (params.loggedIn !== 'yes')
         statusCode = 401;
     }
     else if (parsedUrl.pathname === '/forbidden'){
@@ -44,7 +46,7 @@ const onRequest = (request, response) => {
     else{
         statusCode = 404;
     }
-    responseHandler.getPage(request, response, acceptedTypes, statusCode);
+    responseHandler.getPage(request, response, acceptedTypes, statusCode, params);
   }
 };
 
