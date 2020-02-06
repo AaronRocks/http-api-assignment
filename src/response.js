@@ -29,7 +29,7 @@ const getPage = (request, response, acceptedTypes, statusCode, params) => {
     body.statusMessage = 'Internal Error';
   } else if (statusCode === 501) {
     body.id = 'notImplemented';
-    body.message = 'A GET request for this page has not been implementedyet. Check again later for updated content';
+    body.message = 'A GET request for this page has not been implemented yet. Check again later for updated content';
     body.statusMessage = 'Not Implemented';
   }
   // if not any of the other status codes, error 404 not found
