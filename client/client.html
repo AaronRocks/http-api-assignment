@@ -7,7 +7,46 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
 
+const handleResponse = (xhr) => {
+      const type = xhr.getResponseHeader('Content-Type');
 
+      const content = document.querySelector("#content");
+      // create a line on the screen
+      content.appendChild(document.createElement('hr'));
+      // h1 tag for status code
+      // p tag for acompanying message
+      const h1 = document.createElement('h1');
+      const p = document.createElement('p');
+
+      if (type === 'application/json'){
+        const obj = JSON.parse(xhr.response);
+
+        h1.textContent = `${obj.statusMessage}`;
+        p.textContent = `${obj.message}` || 'No Message';
+
+      } else if (type === 'text/xml'){
+        console.dir(xhr.response);
+        const statusMessage = xhr.responseXML.querySelector('statusMessage').textContent;
+        const message = xhr.responseXML.querySelector('message').textContent;
+
+        h1.textContent = `${statusMessage}`;
+        p.textContent = `${message}` || 'No Message';
+      }
+
+      content.appendChild(h1);
+      content.appendChild(p);
+    };
+    
+    const sendAjax = (url, acceptedType) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+
+      xhr.setRequestHeader("Accept", acceptedType);
+
+      xhr.onload = () => handleResponse(xhr);
+
+      xhr.send();
+    };
     const init = () =>{
       // get aspects of the page
         // button to hook up click event
@@ -16,6 +55,9 @@
         // hook up page and type to be sent via onClick event
         const page = document.querySelector("#page").value;
         const type = document.querySelector("#type").value;
+
+        //send page url and type via AJAX
+        sendAjax(page, type);
       };
     }
 

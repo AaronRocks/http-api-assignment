@@ -2,54 +2,50 @@ const http = require('http');
 const url = require('url');
 const query = require('querystring');
 const htmlHandler = require('./htmlResponse.js');
-const jsonHandler = require('./jsonResponse.js');
-const xmlHandler = require('./xmlResponse.js');
+const responseHandler = require('./response.js');
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
-const handleGet = (request, response, parsedUrl) => {
-    if (parsedUrl.pathname === '/style.css') {
-        htmlHandler.getCSS(request, response);
-    } 
-    else if (parsedUrl.pathname === '/badRequest') {
-        // if (xml)
-            // xmlHandler
-        // else
-            // jsonHandler.getUsers(request, response);
-    } 
-    else if (parsedUrl.pathname === '/unauthorized') {
-    // if (xml)
-      // xmlHandler
-    // else
-      // jsonHandler.getUsers(request, response);
-    } 
-    else if (parsedUrl.pathname === '/forbidden') {
-        // if (xml)
-        // xmlHandler
-        // else
-        // jsonHandler.getUsers(request, response);
-    } 
-    else if (parsedUrl.pathname === '/internal') {
-        // if (xml)
-        // xmlHandler
-        // else
-        // jsonHandler.getUsers(request, response);
-    } 
-    else if (parsedUrl.pathname === '/notImplemented') {
-        // if (xml)
-        // xmlHandler
-        // else
-        // jsonHandler.getUsers(request, response);
-    } 
-    else {
-        htmlHandler.getIndex(request, response);
-    }
-};
-
 const onRequest = (request, response) => {
   const parsedUrl = url.parse(request.url);
+  const acceptedTypes = request.headers.accept.split(',');
 
-  handleGet(request, response, parsedUrl);
+  // basic status code is success
+  let statusCode = 200;
+
+  // default index page
+  if (parsedUrl.pathname === '/') {
+    htmlHandler.getIndex(request, response);
+  }
+  // pasrse the style page
+  else if (parsedUrl.pathname === '/style.css') {
+    htmlHandler.getCSS(request, response);
+  } 
+  else {
+    // anything else will check the url. If it is not accepted, will return 404 page
+    if (parsedUrl.pathname === '/badRequest') {
+      // check if the user has querystring of valid=true -> if not, retrun status code 400
+      statusCode = 400;
+    }
+    else if (parsedUrl.pathname === '/unauthorized'){
+        // check if user has querystring of loggedIn=yes -> if not status code 401
+        statusCode = 401;
+    }
+    else if (parsedUrl.pathname === '/forbidden'){
+        statusCode = 403;
+    }
+    else if (parsedUrl.pathname === '/internal'){
+        statusCode = 500;
+    }
+    else if (parsedUrl.pathname === '/notImplemented'){
+        statusCode = 501;
+    }
+    else if (parsedUrl.pathname === '/success'){}
+    else{
+        statusCode = 404;
+    }
+    responseHandler.getPage(request, response, acceptedTypes, statusCode);
+  }
 };
 
 http.createServer(onRequest).listen(port);
