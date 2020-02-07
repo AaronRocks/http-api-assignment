@@ -12,39 +12,31 @@ const onRequest = (request, response) => {
 
   // basic status code is success
   let statusCode = 200;
-  let params = query.parse(parsedUrl.query);
+  const params = query.parse(parsedUrl.query);
   // default index page
   if (parsedUrl.pathname === '/') {
     htmlHandler.getIndex(request, response);
-  }
-  // pasrse the style page
-  else if (parsedUrl.pathname === '/style.css') {
+  } else if (parsedUrl.pathname === '/style.css') {
+    // pasrse the style page
     htmlHandler.getCSS(request, response);
-  } 
-  else {
+  } else {
     // anything else will check the url. If it is not accepted, will return 404 page
     if (parsedUrl.pathname === '/badRequest') {
       // check if the user has querystring of valid=true -> if not, retrun status code 400
-      if (!params.valid || params.valid !== 'true')
-        statusCode = 400;
-    }
-    else if (parsedUrl.pathname === '/unauthorized'){
-        // check if user has querystring of loggedIn=yes -> if not status code 401
-        if (params.loggedIn !== 'yes')
-        statusCode = 401;
-    }
-    else if (parsedUrl.pathname === '/forbidden'){
-        statusCode = 403;
-    }
-    else if (parsedUrl.pathname === '/internal'){
-        statusCode = 500;
-    }
-    else if (parsedUrl.pathname === '/notImplemented'){
-        statusCode = 501;
-    }
-    else if (parsedUrl.pathname === '/success'){}
-    else{
-        statusCode = 404;
+      if (!params.valid || params.valid !== 'true') { statusCode = 400; }
+    } else if (parsedUrl.pathname === '/unauthorized') {
+      // check if user has querystring of loggedIn=yes -> if not status code 401
+      if (params.loggedIn !== 'yes') { statusCode = 401; }
+    } else if (parsedUrl.pathname === '/forbidden') {
+      statusCode = 403;
+    } else if (parsedUrl.pathname === '/internal') {
+      statusCode = 500;
+    } else if (parsedUrl.pathname === '/notImplemented') {
+      statusCode = 501;
+    } else if (parsedUrl.pathname === '/success') {
+      statusCode = 200;
+    } else {
+      statusCode = 404;
     }
     responseHandler.getPage(request, response, acceptedTypes, statusCode, params);
   }
